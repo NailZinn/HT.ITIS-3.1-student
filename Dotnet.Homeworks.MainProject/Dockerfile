@@ -7,7 +7,7 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["Dotnet.Homeworks.MainProject/Dotnet.Homeworks.MainProject.csproj", "Dotnet.Homeworks.MainProject/"]
 RUN dotnet restore "Dotnet.Homeworks.MainProject/Dotnet.Homeworks.MainProject.csproj"
-COPY . .
+COPY ["./Dotnet.Homeworks.MainProject", "Dotnet.Homeworks.MainProject/"]
 WORKDIR "/src/Dotnet.Homeworks.MainProject"
 RUN dotnet build "Dotnet.Homeworks.MainProject.csproj" -c Release -o /app/build
 
