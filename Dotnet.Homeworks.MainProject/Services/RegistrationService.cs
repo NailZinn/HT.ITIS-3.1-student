@@ -17,7 +17,9 @@ public class RegistrationService : IRegistrationService
         // pretending we have some complex logic here
         await Task.Delay(100);
         
+        var sendEmailDto = new SendEmail(userDto.Name, userDto.Email, "Authentication result", "Congratulations! You have successfully authenticated");
+        
         // publish message to a queue
-        await _communicationService.SendEmailAsync(new SendEmail("", "", "", ""));
+        await _communicationService.SendEmailAsync(sendEmailDto);
     }
 }

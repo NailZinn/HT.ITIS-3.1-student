@@ -10,8 +10,12 @@ services:
       - "7000:80"
     environment:
       ConnectionStrings__Default : Server=dotnet_postgres;Port=5432;Database=DefaultDB;User Id=admin;Password=admin1234
+      RabbitMQSettings__Username: admin
+      RabbitMQSettings__Password: admin1234
+      RabbitMQSettings__Hostname: dotnet_rabbitmq
     depends_on: 
       - dotnet_postgres
+      - dotnet_rabbitmq
 
   dotnet_postgres:
     image: postgres:alpine
@@ -23,9 +27,35 @@ services:
       POSTGRES_PASSWORD : admin1234
       POSTGRES_DB : DefaultDB
 
-#  dotnet_rabbitmq:
-#    image: rabbitmq:3-alpine
-#    
+  dotnet_mailing:
+    image: dotnet_mailing
+    container_name: dotnet_mailing
+    build:
+      context: .
+      dockerfile: Dotnet.Homeworks.Mailing.API/Dockerfile
+    ports:
+      - "7001:80"
+    environment:
+      EmailConfig__Email : testuser147000@gmail.com
+      EmailConfig__Host : smtp.gmail.com
+      EmailConfig__Port : 465
+      EmailConfig__Password : bepbttnaukmejrpw
+      RabbitMQSettings__Username : admin
+      RabbitMQSettings__Password : admin1234
+      RabbitMQSettings__Hostname : dotnet_rabbitmq
+    depends_on: 
+      - dotnet_rabbitmq
+  
+  dotnet_rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: dotnet_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER : admin
+      RABBITMQ_DEFAULT_PASS : admin1234
+
 #  dotnet_minio:
 #    image: minio/minio:latest
 #    
@@ -34,12 +64,6 @@ services:
 #    
 #  dotnet_jaeger:
 #    image: jaegertracing/all-in-one:latest
-#    
-#  dotnet_main:
-#    image: dotnet-web
-#    
-#  dotnet_mailing:
-#    image: dotnet-web
 #    
 #  dotnet_storage:
 #    image: dotnet-web
