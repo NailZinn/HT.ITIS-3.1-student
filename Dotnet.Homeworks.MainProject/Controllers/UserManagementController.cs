@@ -16,7 +16,7 @@ public class UserManagementController : ControllerBase
     }
 
     [HttpPost("user")]
-    public async Task<IActionResult> CreateUser(RegisterUserDto userDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateUserAsync(RegisterUserDto userDto, CancellationToken cancellationToken)
     {
         await _registrationService.RegisterAsync(userDto);
         return Ok();

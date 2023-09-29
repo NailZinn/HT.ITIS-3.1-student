@@ -1,7 +1,7 @@
 using Dotnet.Homeworks.Data.DatabaseContext;
-using Dotnet.Homeworks.MainProject.Configuration;
 using Dotnet.Homeworks.MainProject.Services;
 using Dotnet.Homeworks.MainProject.ServicesExtensions.Masstransit;
+using Dotnet.Homeworks.Shared.RabbitMqConfiguration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,7 +21,8 @@ var rabbitMqConfig = new RabbitMqConfig
 {
     Username = builder.Configuration["RabbitMQSettings:Username"]!,
     Password = builder.Configuration["RabbitMQSettings:Password"]!,
-    Hostname = builder.Configuration["RabbitMQSettings:Hostname"]!
+    Hostname = builder.Configuration["RabbitMQSettings:Hostname"]!,
+    Port = int.Parse(builder.Configuration["RabbitMQSettings:Port"]!)
 };
 
 builder.Services.AddMasstransitRabbitMq(rabbitMqConfig);

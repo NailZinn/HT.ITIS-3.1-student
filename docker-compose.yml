@@ -13,6 +13,7 @@ services:
       RabbitMQSettings__Username: admin
       RabbitMQSettings__Password: admin1234
       RabbitMQSettings__Hostname: dotnet_rabbitmq
+      RabbitMQSettings__Port: 5672
     depends_on: 
       - dotnet_postgres
       - dotnet_rabbitmq
@@ -38,11 +39,12 @@ services:
     environment:
       EmailConfig__Email : testuser147000@gmail.com
       EmailConfig__Host : smtp.gmail.com
-      EmailConfig__Port : 465
+      EmailConfig__Port : 25
       EmailConfig__Password : bepbttnaukmejrpw
       RabbitMQSettings__Username : admin
       RabbitMQSettings__Password : admin1234
       RabbitMQSettings__Hostname : dotnet_rabbitmq
+      RabbitMQSettings__Port: 5672
     depends_on: 
       - dotnet_rabbitmq
   
