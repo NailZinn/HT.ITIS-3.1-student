@@ -28,7 +28,10 @@ public class MailingService : IMailingService
             TextBody = $"Your message: {emailDto.Content}"
         };
         message.Body = bodyBuilder.ToMessageBody();
-        using var client = new SmtpClient();
+        using var client = new SmtpClient
+        {
+            CheckCertificateRevocation = false
+        };
         try
         {
             await client.ConnectAsync(_emailConfig.Host, _emailConfig.Port, SecureSocketOptions.StartTls);
