@@ -21,21 +21,16 @@ public class ProductRepository : IProductRepository
 
     public Task DeleteProductByGuidAsync(Guid id, CancellationToken cancellationToken)
     {
-        var productToDelete = new Product
-        {
-            Id = id
-        };
-        
-        _dbContext.Entry(productToDelete).State = EntityState.Deleted;
-
-        return Task.CompletedTask;
+        return _dbContext.Products
+            .Where(p => p.Id == id)
+            .ExecuteDeleteAsync(cancellationToken);
     }
 
     public Task UpdateProductAsync(Product product, CancellationToken cancellationToken)
     {
-        _dbContext.Entry(product).State = EntityState.Modified;
-        
-        return Task.CompletedTask;
+        return _dbContext.Products
+            .Where(p => p.Id == product.Id)
+            .ExecuteUpdateAsync(x => x.SetProperty(p => p.Name, product.Name), cancellationToken);
     }
 
     public Task<Guid> InsertProductAsync(Product product, CancellationToken cancellationToken)

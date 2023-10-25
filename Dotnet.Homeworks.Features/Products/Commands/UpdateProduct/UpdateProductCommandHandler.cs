@@ -1,7 +1,6 @@
 using Dotnet.Homeworks.Domain.Abstractions.Repositories;
 using Dotnet.Homeworks.Domain.Entities;
 using Dotnet.Homeworks.Infrastructure.Cqrs.Commands;
-using Dotnet.Homeworks.Infrastructure.UnitOfWork;
 using Dotnet.Homeworks.Shared.Dto;
 
 namespace Dotnet.Homeworks.Features.Products.Commands.UpdateProduct;
@@ -9,12 +8,10 @@ namespace Dotnet.Homeworks.Features.Products.Commands.UpdateProduct;
 internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand>
 {
     private readonly IProductRepository _productRepository;
-    private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateProductCommandHandler(IProductRepository productRepository, IUnitOfWork unitOfWork)
+    public UpdateProductCommandHandler(IProductRepository productRepository)
     {
         _productRepository = productRepository;
-        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
@@ -26,8 +23,6 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
         };
         
         await _productRepository.UpdateProductAsync(productToUpdate, cancellationToken);
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new Result(true);
     }
