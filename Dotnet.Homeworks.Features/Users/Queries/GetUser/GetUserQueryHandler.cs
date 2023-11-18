@@ -30,6 +30,11 @@ public class GetUserQueryHandler : CqrsDecorator<GetUserQuery, Result<GetUserDto
         
         var user = await _userRepository.GetUserByGuidAsync(request.Guid, cancellationToken)!;
 
+        if (user is null)
+        {
+            return $"User with identifier {request.Guid} was not found";
+        }
+        
         return new GetUserDto(user.Id, user.Name, user.Email);
     }
 }

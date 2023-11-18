@@ -20,6 +20,6 @@ public class AdminPermissionCheck : IPermissionCheck<IAdminRequest>
     {
         var isAdmin = _httpContext.User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value == Roles.Admin.ToString());
         
-        return Task.FromResult(new PermissionResult(isAdmin));
+        return Task.FromResult(new PermissionResult(isAdmin, "Access denied"));
     }
 }

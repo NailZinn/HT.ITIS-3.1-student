@@ -19,6 +19,6 @@ public class ClientPermissionCheck : IPermissionCheck<IClientRequest>
     {
         var isClient = _httpContext.User.Claims.Any(c => c.Type == ClaimTypes.NameIdentifier && c.Value == request.Guid.ToString());
 
-        return Task.FromResult(new PermissionResult(isClient));
+        return Task.FromResult(new PermissionResult(isClient, "Access denied"));
     }
 }

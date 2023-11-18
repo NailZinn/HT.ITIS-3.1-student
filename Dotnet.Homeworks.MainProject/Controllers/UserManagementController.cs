@@ -1,13 +1,17 @@
-﻿using Dotnet.Homeworks.Domain.Entities;
+﻿using System.Security.Claims;
+using Dotnet.Homeworks.Domain.Entities;
 using Dotnet.Homeworks.Features.UserManagement.Commands.DeleteUserByAdmin;
 using Dotnet.Homeworks.Features.UserManagement.Queries.GetAllUsers;
 using Dotnet.Homeworks.Features.Users.Commands.CreateUser;
 using Dotnet.Homeworks.Features.Users.Commands.DeleteUser;
 using Dotnet.Homeworks.Features.Users.Commands.UpdateUser;
 using Dotnet.Homeworks.Features.Users.Queries.GetUser;
+using Dotnet.Homeworks.Infrastructure.Validation.PermissionChecker.Enums;
 using Dotnet.Homeworks.MainProject.Dto;
 using Dotnet.Homeworks.MainProject.Services;
 using Dotnet.Homeworks.Mediator;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dotnet.Homeworks.MainProject.Controllers;
@@ -34,9 +38,19 @@ public class UserManagementController : ControllerBase
         {
             return BadRequest(result.Error);
         }
+
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, result.Value!.Guid.ToString()),
+            new Claim(ClaimTypes.Role, Roles.User.ToString())
+        };
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = new ClaimsPrincipal(identity);
+
+        await HttpContext.SignInAsync(principal);
         
-        await _registrationService.RegisterAsync(userDto);
-        return Ok();
+        await _registrationService.RegisterAsync(userDto);        
+        return Ok(result.Value);
     }
 
     [HttpGet("profile/{guid:guid}")]

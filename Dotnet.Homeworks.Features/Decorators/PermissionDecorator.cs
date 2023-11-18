@@ -27,7 +27,7 @@ public class PermissionDecorator<TRequest, TResponse> : ValidationDecorator<TReq
 
         if (permissionResult.IsFailure)
         {
-            return false as dynamic;
+            return permissionResult.Error! as dynamic;
         }
         
         return await base.Handle(request, cancellationToken);

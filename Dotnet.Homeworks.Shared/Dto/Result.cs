@@ -17,6 +17,11 @@ public class Result
     {
         return new Result(isSuccessful);
     }
+    
+    public static implicit operator Result(string errors)
+    {
+        return new Result(false, errors);
+    }
 }
 
 public class Result<TValue> : Result

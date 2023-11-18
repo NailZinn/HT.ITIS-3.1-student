@@ -20,7 +20,7 @@ public class PermissionBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
 
         if (permissionResult.IsFailure)
         {
-            return false as dynamic;
+            return permissionResult.Error! as dynamic;
         }
         
         return await next();

@@ -12,7 +12,7 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
         _userRepository = userRepository;
         
         RuleFor(x => x.Email)
-            .MustAsync(CheckExistingEmail)
+            .MustAsync(CheckExistingEmail).WithMessage("User with this email already exists")
             .NotEmpty().WithMessage("Email shouldn't be empty")
             .NotNull().WithMessage("Email shouldn't be null")
             .Matches(@"\w+@\w+\.\w+").WithMessage("Email doesn't match the pattern");

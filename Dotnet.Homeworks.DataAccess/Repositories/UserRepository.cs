@@ -26,11 +26,11 @@ public class UserRepository : IUserRepository
         return Task.FromResult(user);
     }
 
-    public Task DeleteUserByGuidAsync(Guid guid, CancellationToken cancellationToken)
+    public async Task DeleteUserByGuidAsync(Guid guid, CancellationToken cancellationToken)
     {
-        _dbContext.Entry(new User { Id = guid }).State = EntityState.Deleted;
-
-        return Task.CompletedTask;
+        var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == guid, cancellationToken);
+        
+        _dbContext.Users.Remove(user!);
     }
 
     public Task UpdateUserAsync(User user, CancellationToken cancellationToken)
