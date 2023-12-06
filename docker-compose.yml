@@ -14,9 +14,13 @@ services:
       RabbitMQSettings__Password: admin1234
       RabbitMQSettings__Hostname: dotnet_rabbitmq
       RabbitMQSettings__Port: 5672
+      MongoDBConfig__ConnectionString : mongodb://dotnet_mongodb:27017
+      MongoDBCOnfig__DatabaseName : OrderDB
+      MongoDBConfig__CollectionName : Orders
     depends_on: 
       - dotnet_postgres
       - dotnet_rabbitmq
+      - dotnet_mongodb
 
   dotnet_postgres:
     image: postgres:alpine
@@ -86,8 +90,14 @@ services:
       MINIO_ROOT_PASSWORD : admin1234
     command: server --console-address ":9001" /data/
         
-#  dotnet_mongodb:
-#    image: mongo:latest
-#    
+  dotnet_mongodb:
+    image: mongo:latest
+    container_name: dotnet_mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME : admin
+      MONGO_INITDB_ROOT_PASSWORD : admin1234
+      
 #  dotnet_jaeger:
 #    image: jaegertracing/all-in-one:latest

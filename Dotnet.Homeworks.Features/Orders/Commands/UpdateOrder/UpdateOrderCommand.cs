@@ -1,13 +1,11 @@
+using Dotnet.Homeworks.Features.Orders.Shared;
+using Dotnet.Homeworks.Infrastructure.Cqrs.Commands;
+using Dotnet.Homeworks.Infrastructure.Validation.RequestTypes;
+
 namespace Dotnet.Homeworks.Features.Orders.Commands.UpdateOrder;
 
-public class UpdateOrderCommand // TODO: implement interface
-{
-    public UpdateOrderCommand(Guid orderId, IEnumerable<Guid> productsIds)
-    {
-        OrderId = orderId;
-        ProductsIds = productsIds;
-    }
-
-    public Guid OrderId { get; init; }
-    public IEnumerable<Guid> ProductsIds { get; init; }
-}
+public record UpdateOrderCommand(Guid OrderId, IEnumerable<Guid> ProductIds) : 
+    ICommand, 
+    IHasAuthorizationCheck,
+    IHasProductIdsValidation,
+    IHasOrderValidation;
