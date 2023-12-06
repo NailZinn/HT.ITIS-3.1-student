@@ -8,7 +8,7 @@ WORKDIR /src
 COPY ["Dotnet.Homeworks.Mailing.API/Dotnet.Homeworks.Mailing.API.csproj", "Dotnet.Homeworks.Mailing.API/"]
 COPY ["Dotnet.Homeworks.Shared/Dotnet.Homeworks.Shared.csproj", "Dotnet.Homeworks.Shared/"]
 RUN dotnet restore "Dotnet.Homeworks.Mailing.API/Dotnet.Homeworks.Mailing.API.csproj"
-COPY ["./Dotnet.Homeworks.Mailing.API.csproj", "Dotnet.Homeworks.Mailimg.API/"]
+COPY . .
 WORKDIR "/src/Dotnet.Homeworks.Mailing.API"
 RUN dotnet build "Dotnet.Homeworks.Mailing.API.csproj" -c Release -o /app/build
 
