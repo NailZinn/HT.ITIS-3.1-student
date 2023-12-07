@@ -14,7 +14,7 @@ services:
       RabbitMQSettings__Password: admin1234
       RabbitMQSettings__Hostname: dotnet_rabbitmq
       RabbitMQSettings__Port: 5672
-      MongoDBConfig__ConnectionString : mongodb://dotnet_mongodb:27017
+      MongoDBConfig__ConnectionString : mongodb://admin:admin1234@dotnet_mongodb:27017
       MongoDBCOnfig__DatabaseName : OrderDB
       MongoDBConfig__CollectionName : Orders
     depends_on: 

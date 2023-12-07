@@ -1,5 +1,4 @@
 using Dotnet.Homeworks.Domain.Abstractions.Repositories;
-using Dotnet.Homeworks.Features.Orders.Commands.CreateOrder;
 using FluentValidation;
 
 namespace Dotnet.Homeworks.Features.Orders.Shared;

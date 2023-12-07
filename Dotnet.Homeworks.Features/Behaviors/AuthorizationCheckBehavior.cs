@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Dotnet.Homeworks.Domain.Abstractions.Repositories;
 using Dotnet.Homeworks.Infrastructure.Validation.RequestTypes;
 using Dotnet.Homeworks.Mediator;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +17,7 @@ public class AuthorizationCheckBehavior<TRequest, TResponse> : IPipelineBehavior
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        if (!_httpContext.User.HasClaim(x => x.Type == ClaimTypes.NameIdentifier))
+        if (!_httpContext.User.HasClaim(x => x is { Type: ClaimTypes.NameIdentifier, Value: not null }))
         {
             return false as dynamic;
         }

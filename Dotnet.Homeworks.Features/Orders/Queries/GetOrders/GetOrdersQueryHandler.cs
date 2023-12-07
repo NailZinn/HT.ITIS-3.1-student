@@ -1,12 +1,8 @@
 using System.Security.Claims;
 using Dotnet.Homeworks.Domain.Abstractions.Repositories;
-using Dotnet.Homeworks.Features.Decorators;
 using Dotnet.Homeworks.Features.Orders.Queries.GetOrder;
 using Dotnet.Homeworks.Infrastructure.Cqrs.Queries;
-using Dotnet.Homeworks.Infrastructure.Validation.PermissionChecker;
-using Dotnet.Homeworks.Infrastructure.Validation.RequestTypes;
 using Dotnet.Homeworks.Shared.Dto;
-using FluentValidation;
 using Microsoft.AspNetCore.Http;
 
 namespace Dotnet.Homeworks.Features.Orders.Queries.GetOrders;

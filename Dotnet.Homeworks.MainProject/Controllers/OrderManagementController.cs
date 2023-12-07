@@ -25,7 +25,7 @@ public class OrderManagementController : ControllerBase
         var result = await _mediator.Send(query, cancellationToken);
         return result.IsSuccess
             ? Ok(result.Value)
-            : BadRequest(result.Error);
+            : result.Error is null ? Unauthorized() : BadRequest(result.Error);
     }
 
     [HttpGet("order/{id:guid}")]
@@ -45,7 +45,7 @@ public class OrderManagementController : ControllerBase
         var result = await _mediator.Send(command, cancellationToken);
         return result.IsSuccess
             ? Ok(result.Value)
-            : BadRequest(result.Error);
+            : result.Error is null ? Unauthorized() : BadRequest(result.Error);
     }
 
     [HttpPut("order/{id:guid}")]
@@ -53,7 +53,9 @@ public class OrderManagementController : ControllerBase
     {
         var command = new UpdateOrderCommand(id, productsIds);
         var result = await _mediator.Send(command, cancellationToken);
-        return Ok(result);
+        return result.IsSuccess
+            ? Ok()
+            : result.Error is null ? Unauthorized() : BadRequest(result.Error);
     }
 
     [HttpDelete("order/{id:guid}")]
@@ -63,6 +65,6 @@ public class OrderManagementController : ControllerBase
         var result = await _mediator.Send(command, cancellationToken);
         return result.IsSuccess
             ? Ok()
-            : BadRequest(result.Error);
+            : result.Error is null ? Unauthorized() : BadRequest(result.Error);
     }
 }

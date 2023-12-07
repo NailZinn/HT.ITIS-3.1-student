@@ -15,14 +15,17 @@ namespace Dotnet.Homeworks.Features.Orders.Commands.UpdateOrder;
 public class UpdateOrderCommandHandler : CqrsDecorator<UpdateOrderCommand, Result>, ICommandHandler<UpdateOrderCommand>
 {
     private readonly IOrderRepository _orderRepository;
+    private readonly HttpContext _httpContext;
 
     public UpdateOrderCommandHandler(
         IOrderRepository orderRepository, 
         IEnumerable<IValidator<IHasProductIdsValidation>> validators,
-        IPermissionCheck<IClientRequest> permissionCheck)
+        IPermissionCheck<IClientRequest> permissionCheck, 
+        IHttpContextAccessor httpContextAccessor)
         : base(validators, permissionCheck)
     {
         _orderRepository = orderRepository;
+        _httpContext = httpContextAccessor.HttpContext!;
     }
 
     public override async Task<Result> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
@@ -31,10 +34,12 @@ public class UpdateOrderCommandHandler : CqrsDecorator<UpdateOrderCommand, Resul
 
         if (decoratorsResult.IsFailure) return decoratorsResult;
         
+        var userId = Guid.Parse(_httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var orderToUpdate = new Order
         {
             Id = request.OrderId,
-            ProductsIds = request.ProductIds
+            ProductsIds = request.ProductIds,
+            OrdererId = userId
         };
 
         await _orderRepository.UpdateOrderAsync(orderToUpdate, cancellationToken);
