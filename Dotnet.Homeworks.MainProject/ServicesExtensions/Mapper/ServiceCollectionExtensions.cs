@@ -6,7 +6,21 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddMappers(this IServiceCollection services, Assembly mapperConfigsAssembly)
     {
-        // TODO: добавить автоматическую регистрацию всех мапперов, найденных в переданной сборке, с помощью рефлексии
-        throw new NotImplementedException();
+        var mappers = mapperConfigsAssembly
+            .GetTypes()
+            .Where(x => x is { IsClass: true, IsAbstract: false, IsGenericType: false } && x.Name.EndsWith("Mapper"))
+            .Select(x => new
+            {
+                Interface = x.GetInterfaces().FirstOrDefault(i => i.Name.EndsWith("Mapper")),
+                Implemetation = x
+            })
+            .Where(x => x.Interface is not null);
+
+        foreach (var mapper in mappers)
+        {
+            services.AddSingleton(mapper.Interface!, mapper.Implemetation);
+        }
+
+        return services;
     }
 }

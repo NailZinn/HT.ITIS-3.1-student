@@ -1,7 +1,9 @@
 using Dotnet.Homeworks.Data.DatabaseContext;
 using Dotnet.Homeworks.Features;
+using Dotnet.Homeworks.Features.Helpers;
 using Dotnet.Homeworks.MainProject.Configuration;
 using Dotnet.Homeworks.MainProject.Services;
+using Dotnet.Homeworks.MainProject.ServicesExtensions.Mapper;
 using Dotnet.Homeworks.MainProject.ServicesExtensions.Masstransit;
 using Dotnet.Homeworks.MainProject.ServicesExtensions.MongoDb;
 using Dotnet.Homeworks.Shared.RabbitMqConfiguration;
@@ -29,6 +31,7 @@ var mongoDbConfig = builder.Configuration.GetSection("MongoDBConfig").Get<MongoD
 
 builder.Services.AddMasstransitRabbitMq(rabbitMqConfig);
 builder.Services.AddMongoClient(mongoDbConfig);
+builder.Services.AddMappers(AssemblyReference.Assembly);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
