@@ -6,6 +6,7 @@ using Dotnet.Homeworks.MainProject.Services;
 using Dotnet.Homeworks.MainProject.ServicesExtensions.Mapper;
 using Dotnet.Homeworks.MainProject.ServicesExtensions.Masstransit;
 using Dotnet.Homeworks.MainProject.ServicesExtensions.MongoDb;
+using Dotnet.Homeworks.MainProject.ServicesExtensions.OpenTelemetry;
 using Dotnet.Homeworks.Shared.RabbitMqConfiguration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -28,10 +29,12 @@ builder.Services.AddApplicationServices();
 
 var rabbitMqConfig = builder.Configuration.GetSection("RabbitMQSettings").Get<RabbitMqConfig>()!;
 var mongoDbConfig = builder.Configuration.GetSection("MongoDBConfig").Get<MongoDbConfig>()!;
+var openTelemetryConfig = builder.Configuration.GetSection("OpenTelemetryConfig").Get<OpenTelemetryConfig>()!;
 
 builder.Services.AddMasstransitRabbitMq(rabbitMqConfig);
 builder.Services.AddMongoClient(mongoDbConfig);
 builder.Services.AddMappers(AssemblyReference.Assembly);
+builder.Services.AddOpenTelemetry(openTelemetryConfig);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
