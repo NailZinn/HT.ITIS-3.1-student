@@ -51,7 +51,7 @@ public class ImageStorage : IStorage<Image>
         var args = new GetObjectArgs()
             .WithBucket(_bucketName)
             .WithObject(itemName)
-            .WithCallbackStream(s => s.CopyToAsync(stream, cancellationToken));
+            .WithCallbackStream(s => s.CopyTo(stream));
 
         try
         {
@@ -115,11 +115,7 @@ public class ImageStorage : IStorage<Image>
 
             return true;
         }
-        catch (BucketNotFoundException ex)
-        {
-            return ex.Message;
-        }
-        catch (ObjectNotFoundException ex)
+        catch (Exception ex)
         {
             return ex.Message;
         }
