@@ -7,46 +7,46 @@ public class UsersSpecs : IUsersSpecs
 {
     public Specification<User> HasGoogleEmail()
     {
-        throw new NotImplementedException();
+        return new Specification<User>(u => u.Email.EndsWith("gmail.com"));
     }
 
     public Specification<User> HasYandexEmail()
     {
-        throw new NotImplementedException();
+        return new Specification<User>(u => u.Email.EndsWith("yandex.ru"));
     }
 
     public Specification<User> HasMailEmail()
     {
-        throw new NotImplementedException();
+        return new Specification<User>(u => u.Email.EndsWith("mail.ru"));
     }
 
     public Specification<User> HasPopularEmailVendor()
     {
-        throw new NotImplementedException();
+        return HasGoogleEmail() || HasYandexEmail() || HasMailEmail();
     }
 
     public Specification<User> HasLongName()
     {
-        throw new NotImplementedException();
+        return new Specification<User>(u => u.Name.Length > 15);
     }
 
     public Specification<User> HasCompositeNameWithWhitespace()
     {
-        throw new NotImplementedException();
+        return new Specification<User>(u => u.Name.Contains(' '));
     }
 
     public Specification<User> HasCompositeNameWithHyphen()
     {
-        throw new NotImplementedException();
+        return new Specification<User>(u => u.Name.Contains('-'));
     }
 
     public Specification<User> HasCompositeName()
     {
-        throw new NotImplementedException();
+        return HasCompositeNameWithHyphen() || HasCompositeNameWithWhitespace();
     }
 
     public Specification<User> HasComplexName()
     {
-        throw new NotImplementedException();
+        return HasLongName() && HasCompositeName();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Dotnet.Homeworks.Domain.Abstractions.Repositories;
 using Dotnet.Homeworks.Features.Decorators;
 using Dotnet.Homeworks.Features.Users.Commands.UpdateUser;
+using Dotnet.Homeworks.Features.Users.Mapping;
 using Dotnet.Homeworks.Infrastructure.Cqrs.Queries;
 using Dotnet.Homeworks.Infrastructure.Validation.PermissionChecker;
 using Dotnet.Homeworks.Infrastructure.Validation.RequestTypes;
@@ -12,14 +13,17 @@ namespace Dotnet.Homeworks.Features.Users.Queries.GetUser;
 public class GetUserQueryHandler : CqrsDecorator<GetUserQuery, Result<GetUserDto>>, IQueryHandler<GetUserQuery, GetUserDto>
 {
     private readonly IUserRepository _userRepository;
+    private readonly IUserMapper _userMapper;
 
     public GetUserQueryHandler(
         IUserRepository userRepository,
         IEnumerable<IValidator<GetUserQuery>> validators, 
-        IPermissionCheck<IClientRequest> permissionCheck)
+        IPermissionCheck<IClientRequest> permissionCheck, 
+        IUserMapper userMapper)
         : base(validators, permissionCheck)
     {
         _userRepository = userRepository;
+        _userMapper = userMapper;
     }
 
     public override async Task<Result<GetUserDto>> Handle(GetUserQuery request, CancellationToken cancellationToken)
@@ -34,7 +38,7 @@ public class GetUserQueryHandler : CqrsDecorator<GetUserQuery, Result<GetUserDto
         {
             return $"User with identifier {request.Guid} was not found";
         }
-        
-        return new GetUserDto(user.Id, user.Name, user.Email);
+
+        return _userMapper.Map(user);
     }
 }

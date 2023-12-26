@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Dotnet.Homeworks.Domain.Abstractions.Repositories;
+using Dotnet.Homeworks.Features.Orders.Mapping;
 using Dotnet.Homeworks.Infrastructure.Cqrs.Queries;
 using Dotnet.Homeworks.Shared.Dto;
 using Microsoft.AspNetCore.Http;
@@ -9,11 +10,13 @@ namespace Dotnet.Homeworks.Features.Orders.Queries.GetOrder;
 public class GetOrderQueryHandler : IQueryHandler<GetOrderQuery, GetOrderDto>
 {
     private readonly IOrderRepository _orderRepository;
+    private readonly IOrderMapper _orderMapper;
     private readonly HttpContext _httpContext;
 
-    public GetOrderQueryHandler(IOrderRepository orderRepository, IHttpContextAccessor httpContextAccessor)
+    public GetOrderQueryHandler(IOrderRepository orderRepository, IHttpContextAccessor httpContextAccessor, IOrderMapper orderMapper)
     {
         _orderRepository = orderRepository;
+        _orderMapper = orderMapper;
         _httpContext = httpContextAccessor.HttpContext!;
     }
 
@@ -33,6 +36,6 @@ public class GetOrderQueryHandler : IQueryHandler<GetOrderQuery, GetOrderDto>
             return "You have no access";
         }
 
-        return new GetOrderDto(order.Id, order.ProductsIds);
+        return _orderMapper.Map(order);
     }
 }
