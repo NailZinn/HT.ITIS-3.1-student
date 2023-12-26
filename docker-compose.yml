@@ -17,10 +17,12 @@ services:
       MongoDBConfig__ConnectionString : mongodb://admin:admin1234@dotnet_mongodb:27017
       MongoDBCOnfig__DatabaseName : OrderDB
       MongoDBConfig__CollectionName : Orders
+      OpenTelemetryConfig__OtlpExporterEndpoint : http://dotnet_jaeger:4317
     depends_on: 
       - dotnet_postgres
       - dotnet_rabbitmq
       - dotnet_mongodb
+      - dotnet_jaeger
 
   dotnet_postgres:
     image: postgres:alpine
@@ -99,5 +101,11 @@ services:
       MONGO_INITDB_ROOT_USERNAME : admin
       MONGO_INITDB_ROOT_PASSWORD : admin1234
       
-#  dotnet_jaeger:
-#    image: jaegertracing/all-in-one:latest
+  dotnet_jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: dotnet_jaeger
+    ports:
+      - "14268:14268"
+      - "16686:16686"
+    environment:
+      COLLECTOR_OTLP_ENABLED : true
