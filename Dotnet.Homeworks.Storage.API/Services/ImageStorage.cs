@@ -1,33 +1,123 @@
-﻿using Dotnet.Homeworks.Shared.Dto;
+﻿using System.Reactive.Linq;
+using Dotnet.Homeworks.Shared.Dto;
+using Dotnet.Homeworks.Storage.API.Constants;
 using Dotnet.Homeworks.Storage.API.Dto.Internal;
+using Minio;
+using Minio.DataModel.Args;
+using Minio.Exceptions;
 
 namespace Dotnet.Homeworks.Storage.API.Services;
 
 public class ImageStorage : IStorage<Image>
 {
-    public Task<Result> PutItemAsync(Image item, CancellationToken cancellationToken = default)
+    private readonly IMinioClient _minioClient;
+    private readonly string _bucketName;
+
+    public ImageStorage(IMinioClient minioClient, string bucketName)
     {
-        throw new NotImplementedException();
+        _minioClient = minioClient;
+        _bucketName = bucketName;
     }
 
-    public Task<Image?> GetItemAsync(string itemName, CancellationToken cancellationToken = default)
+    public async Task<Result> PutItemAsync(Image item, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var existingItem = await GetItemAsync(item.FileName, cancellationToken);
+
+        if (existingItem is not null)
+        {
+            return $"Item {item.FileName} already exists";
+        }
+        
+        item.Metadata.Add(MetadataKeys.Destination, _bucketName);
+
+        var args = new PutObjectArgs()
+            .WithBucket(Buckets.Pending)
+            .WithObject(item.FileName)
+            .WithObjectSize(item.Content.Length)
+            .WithContentType(item.ContentType)
+            .WithHeaders(item.Metadata)
+            .WithStreamData(item.Content);
+
+        var response = await _minioClient.PutObjectAsync(args, cancellationToken);
+
+        return response is not null
+            ? true
+            : $"Couldn't put item {item.FileName} to bucket {Buckets.Pending}";
     }
 
-    public Task<Result> RemoveItemAsync(string itemName, CancellationToken cancellationToken = default)
+    public async Task<Image?> GetItemAsync(string itemName, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var stream = new MemoryStream();
+        var args = new GetObjectArgs()
+            .WithBucket(_bucketName)
+            .WithObject(itemName)
+            .WithCallbackStream(s => s.CopyTo(stream));
+
+        try
+        {
+            var response = await _minioClient.GetObjectAsync(args, cancellationToken);
+            stream.Position = 0;
+
+            return new Image(stream, response.ObjectName, response.ContentType, response.MetaData);
+        }
+        catch (BucketNotFoundException)
+        {
+            return null;
+        }
+        catch (ObjectNotFoundException)
+        {
+            return null;
+        }
     }
 
-    public Task<IEnumerable<string>> EnumerateItemNamesAsync(CancellationToken cancellationToken = default)
+    public async Task<Result> RemoveItemAsync(string itemName, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var args = new RemoveObjectArgs()
+            .WithBucket(_bucketName)
+            .WithObject(itemName);
+
+        try
+        {
+            await _minioClient.RemoveObjectAsync(args, cancellationToken);
+
+            return true;
+        }
+        catch (BucketNotFoundException ex)
+        {
+            return ex.Message;
+        }
     }
 
-    public Task<Result> CopyItemToBucketAsync(string itemName, string destinationBucketName,
+    public async Task<IEnumerable<string>> EnumerateItemNamesAsync(CancellationToken cancellationToken = default)
+    {
+        var args = new ListObjectsArgs()
+            .WithBucket(_bucketName);
+
+        return await _minioClient
+            .ListObjectsAsync(args, cancellationToken)
+            .Select(x => x.Key)
+            .ToList();
+    }
+
+    public async Task<Result> CopyItemToBucketAsync(string itemName, string destinationBucketName,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var args = new CopyObjectArgs()
+            .WithBucket(destinationBucketName)
+            .WithObject(itemName)
+            .WithCopyObjectSource(new CopySourceObjectArgs()
+                .WithBucket(_bucketName)
+                .WithObject(itemName));
+
+        try
+        {
+            await _minioClient.CopyObjectAsync(args, cancellationToken);
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return ex.Message;
+        }
     }
 }
