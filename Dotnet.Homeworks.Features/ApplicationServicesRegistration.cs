@@ -17,6 +17,8 @@ public static class ApplicationServicesRegistration
     {
         serviceCollection.AddMediator(AssemblyReference.Assembly);
         serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(PermissionBehavior<,>));
+        serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationCheckBehavior<,>));
+        serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(OrderValidationBehavior<,>));
         
         serviceCollection.AddPermissionChecks(AssemblyReference.Assembly);
 

@@ -1,7 +1,9 @@
 using Dotnet.Homeworks.Data.DatabaseContext;
 using Dotnet.Homeworks.Features;
+using Dotnet.Homeworks.MainProject.Configuration;
 using Dotnet.Homeworks.MainProject.Services;
 using Dotnet.Homeworks.MainProject.ServicesExtensions.Masstransit;
+using Dotnet.Homeworks.MainProject.ServicesExtensions.MongoDb;
 using Dotnet.Homeworks.Shared.RabbitMqConfiguration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -22,15 +24,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddApplicationServices();
 
-var rabbitMqConfig = new RabbitMqConfig
-{
-    Username = builder.Configuration["RabbitMQSettings:Username"]!,
-    Password = builder.Configuration["RabbitMQSettings:Password"]!,
-    Hostname = builder.Configuration["RabbitMQSettings:Hostname"]!,
-    Port = int.Parse(builder.Configuration["RabbitMQSettings:Port"]!)
-};
+var rabbitMqConfig = builder.Configuration.GetSection("RabbitMQSettings").Get<RabbitMqConfig>()!;
+var mongoDbConfig = builder.Configuration.GetSection("MongoDBConfig").Get<MongoDbConfig>()!;
 
 builder.Services.AddMasstransitRabbitMq(rabbitMqConfig);
+builder.Services.AddMongoClient(mongoDbConfig);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

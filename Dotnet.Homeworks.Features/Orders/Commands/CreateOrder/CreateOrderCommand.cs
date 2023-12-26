@@ -1,11 +1,10 @@
+using Dotnet.Homeworks.Features.Orders.Shared;
+using Dotnet.Homeworks.Infrastructure.Cqrs.Commands;
+using Dotnet.Homeworks.Infrastructure.Validation.RequestTypes;
+
 namespace Dotnet.Homeworks.Features.Orders.Commands.CreateOrder;
 
-public class CreateOrderCommand // TODO: implement interface
-{
-    public CreateOrderCommand(IEnumerable<Guid> productsIds)
-    {
-        ProductsIds = productsIds;
-    }
-
-    public IEnumerable<Guid> ProductsIds { get; init; }
-}
+public record CreateOrderCommand(IEnumerable<Guid> ProductIds) : 
+    ICommand<CreateOrderDto>, 
+    IHasAuthorizationCheck,
+    IHasProductIdsValidation;
